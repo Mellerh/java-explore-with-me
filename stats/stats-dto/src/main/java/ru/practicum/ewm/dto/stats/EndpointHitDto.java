@@ -5,14 +5,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EndpointHit {
+public class EndpointHitDto {
 
     @NotBlank
     private String app;
@@ -24,12 +23,7 @@ public class EndpointHit {
     private String ip;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp;
+    private LocalDateTime created;
 
 }
 
-
-//  "app": "ewm-main-service",
-//  "uri": "/events/1",
-//  "ip": "192.163.0.1",
-//  "timestamp": "2022-09-06 11:00:23"

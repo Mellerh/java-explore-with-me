@@ -12,11 +12,10 @@ import ru.practicum.ewm.stats.exception.exceptions.NotFoundException;
 @Slf4j
 public class ErrorHandler {
 
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(final Exception e) {
-        log.warn("Error", e);
+        log.warn("Error", e.getMessage());
         return new ErrorResponse("Error", e.getMessage());
     }
 
@@ -30,7 +29,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(final BadRequestException e) {
-        log.info("BadRequestException", e);
+        log.info("BadRequestException", e.getMessage());
         return new ErrorResponse("BadRequestException", e.getMessage());
     }
 
