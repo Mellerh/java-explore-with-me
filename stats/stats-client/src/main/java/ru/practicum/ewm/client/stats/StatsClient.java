@@ -2,6 +2,7 @@ package ru.practicum.ewm.client.stats;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +38,7 @@ public class StatsClient {
     private final HttpClient httpClient;
 
     public StatsClient(@Value("ewm-main-service") String application,
-                       @Value("${stats-server.url}") String statsServiceUri,
+                       @Value("http://localhost:9090") String statsServiceUri,
                        ObjectMapper json) {
         this.application = application;
         this.statsServiceUri = statsServiceUri;
@@ -47,15 +48,13 @@ public class StatsClient {
                 .build();
     }
 
-    public void hit(String userIp, String requestUri) {
+    public void hit(HttpServletRequest userRequest) {
         EndpointHitDto hit = EndpointHitDto.builder()
                 .app(application)
-                .ip(userIp)
-                .uri(requestUri)
-                .created(LocalDateTime.now())
+                .ip(userRequest.getRemoteAddr())
+                .uri(userRequest.getRequestURI())
+                .timestamp(LocalDateTime.now())
                 .build();
-
-        log.info("StatsClient / hit: {}", hit.toString());
 
         try {
             HttpRequest.BodyPublisher bodyPublisher = HttpRequest
@@ -70,8 +69,6 @@ public class StatsClient {
                     .header(HttpHeaders.ACCEPT, "application/json")
                     .build();
 
-            log.info("StatsClient / hitRequest: {}", hitRequest.toString());
-
             // отправляем сформированный запрос
             HttpResponse<Void> response = httpClient.send(hitRequest, HttpResponse.BodyHandlers.discarding());
             log.debug("Response from stats-service: {}", response);
@@ -83,15 +80,12 @@ public class StatsClient {
     public List<ViewStats> getStats(ViewStatsRequest request) {
         try {
             String queryString = toQueryString(request);
-            log.info("StatsClient / queryString: {}", queryString);
 
             // полученную строку вставляем в запрос
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .uri(URI.create(statsServiceUri + "/stats" + queryString))
                     .header(HttpHeaders.ACCEPT, "application/json")
                     .build();
-
-            log.info("StatsClient / httpRequest: {}", httpRequest.toString());
 
             // отправляем сформированный запрос
             HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
