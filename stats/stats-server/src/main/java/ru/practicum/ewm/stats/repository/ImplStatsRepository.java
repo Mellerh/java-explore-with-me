@@ -30,7 +30,7 @@ public class ImplStatsRepository implements StatsRepository {
             if (unique) {
                 String uniqueSqlRequest = "SELECT stats.app, stats.uri, COUNT(DISTINCT stats.ip) as hits " +
                         "FROM stats " +
-                        "WHERE stats.created BETWEEN ?1 AND ?2 " +
+                        "WHERE stats.created BETWEEN ? AND ? " +
                         "GROUP BY stats.app, stats.uri " +
                         "ORDER BY COUNT(DISTINCT stats.ip) DESC";
 
@@ -46,7 +46,7 @@ public class ImplStatsRepository implements StatsRepository {
             } else {
                 String notUniqueSqlRequest = "SELECT stats.app, stats.uri, COUNT(stats.ip) as hits " +
                         "FROM stats " +
-                        "WHERE stats.created BETWEEN ?1 AND ?2 " +
+                        "WHERE stats.created BETWEEN ? AND ? " +
                         "GROUP BY stats.app, stats.uri " +
                         "ORDER BY COUNT(stats.ip) DESC";
 
@@ -66,7 +66,7 @@ public class ImplStatsRepository implements StatsRepository {
 
                 String uniqueSqlRequestWithUriList = "SELECT stats.app, stats.uri, COUNT(DISTINCT stats.ip) as hits " +
                         "FROM stats " +
-                        "WHERE stats.created BETWEEN ?1 AND ?2 AND (?3) like '%' || s.uri || ',%' " +
+                        "WHERE stats.created BETWEEN ? AND ? AND (?) like '%' || stats.uri || ',%' " +
                         "GROUP BY stats.app, stats.uri " +
                         "ORDER BY COUNT(DISTINCT stats.ip) DESC";
 
@@ -81,7 +81,7 @@ public class ImplStatsRepository implements StatsRepository {
             } else {
                 String uniqueSqlRequestWithUriList = "SELECT stats.app, stats.uri, COUNT(stats.ip) as hits " +
                         "FROM stats " +
-                        "WHERE stats.created BETWEEN ?1 AND ?2 AND (?3) like '%' || s.uri || ',%' " +
+                        "WHERE stats.created BETWEEN ? AND ? AND (?) like '%' || stats.uri || ',%' " +
                         "GROUP BY stats.app, stats.uri " +
                         "ORDER BY COUNT(stats.ip) DESC";
 
