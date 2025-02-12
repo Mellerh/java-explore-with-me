@@ -1,6 +1,7 @@
 package ru.practicum.ewm.dto.stats;
 
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,14 +16,17 @@ import java.util.List;
 @NoArgsConstructor
 public class ViewStatsRequest {
 
+    @NotNull
     private LocalDateTime start;
+    @NotNull
     private LocalDateTime end;
+
     private List<String> uris;
     private boolean unique;
 
-//    @AssertTrue(message = "start не может идти после end")
-//    private boolean isDateValid() {
-//        return start.isBefore(end);
-//    }
+    @AssertTrue(message = "start не может идти после end")
+    private boolean isDateValid() {
+        return start.isBefore(end);
+    }
 
 }

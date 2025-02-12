@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.dto.stats.EndpointHit;
+import ru.practicum.ewm.dto.stats.EndpointHitDto;
 import ru.practicum.ewm.dto.stats.ViewStats;
 import ru.practicum.ewm.dto.stats.ViewStatsRequest;
 
@@ -48,11 +48,11 @@ public class StatsClient {
     }
 
     public void hit(String userIp, String requestUri) {
-        EndpointHit hit = EndpointHit.builder()
+        EndpointHitDto hit = EndpointHitDto.builder()
                 .app(application)
                 .ip(userIp)
                 .uri(requestUri)
-                .timestamp(LocalDateTime.now())
+                .created(LocalDateTime.now())
                 .build();
 
         log.info("StatsClient / hit: {}", hit.toString());

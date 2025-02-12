@@ -1,7 +1,8 @@
-package ru.practicum.ewm.dto.stats;
+package ru.practicum.ewm.dto.stats.mappers;
 
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
+import ru.practicum.ewm.dto.stats.ViewStatsRequest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
