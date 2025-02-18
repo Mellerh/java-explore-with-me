@@ -34,4 +34,6 @@ public class Request {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
+    public Request(LocalDateTime now, Event event, User requester, RequestStatus requestStatus) {
+    }
 }

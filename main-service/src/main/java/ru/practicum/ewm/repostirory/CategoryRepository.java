@@ -7,6 +7,6 @@ import ru.practicum.ewm.model.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    Boolean existByName(String name);
+    Boolean existsByName(String name);
 
 }

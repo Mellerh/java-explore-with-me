@@ -7,8 +7,8 @@ import ru.practicum.ewm.dto.user.NewUserRequest;
 import ru.practicum.ewm.dto.user.UserDto;
 import ru.practicum.ewm.exception.exceptions.BadRequestException;
 import ru.practicum.ewm.exception.exceptions.NotFoundException;
-import ru.practicum.ewm.mapper.UserMapper;
 import ru.practicum.ewm.model.User;
+import ru.practicum.ewm.model.mapper.UserMapper;
 import ru.practicum.ewm.repostirory.UserRepository;
 
 import java.util.ArrayList;

@@ -7,8 +7,8 @@ import ru.practicum.ewm.dto.category.CategoryDto;
 import ru.practicum.ewm.dto.category.NewCategoryDto;
 import ru.practicum.ewm.exception.exceptions.BadRequestException;
 import ru.practicum.ewm.exception.exceptions.NotFoundException;
-import ru.practicum.ewm.mapper.CategoryMapper;
 import ru.practicum.ewm.model.Category;
+import ru.practicum.ewm.model.mapper.CategoryMapper;
 import ru.practicum.ewm.repostirory.CategoryRepository;
 import ru.practicum.ewm.repostirory.EventRepository;
 
@@ -25,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
     // !!ADMIN
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
-        if (categoryRepository.existByName(newCategoryDto.getName())) {
+        if (categoryRepository.existsByName(newCategoryDto.getName())) {
             throw new BadRequestException("Эта категория уже существует " + newCategoryDto.getName());
         }
         Category categoryToSave = categoryMapper.toCategory(newCategoryDto);
@@ -49,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category savedCategory = categoryRepository.findById(categoryId).orElseThrow(() ->
                 new NotFoundException("Категория не найдена " + categoryId));
 
-        if (!savedCategory.getName().equals(categoryDto.getName()) && categoryRepository.existByName(categoryDto.getName())) {
+        if (!savedCategory.getName().equals(categoryDto.getName()) && categoryRepository.existsByName(categoryDto.getName())) {
             throw new BadRequestException("Эта категория уже существует " + categoryDto.getName());
         } else {
             savedCategory.setName(categoryDto.getName());

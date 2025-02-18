@@ -2,7 +2,6 @@ package ru.practicum.ewm.client.stats;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -48,13 +47,15 @@ public class StatsClient {
                 .build();
     }
 
-    public void hit(HttpServletRequest userRequest) {
+    public void hit(String userIp, String requestUri) {
         EndpointHitDto hit = EndpointHitDto.builder()
                 .app(application)
-                .ip(userRequest.getRemoteAddr())
-                .uri(userRequest.getRequestURI())
+                .ip(userIp)
+                .uri(requestUri)
                 .timestamp(LocalDateTime.now())
                 .build();
+
+        log.info("StatsClient / hit: {}", hit.toString());
 
         try {
             HttpRequest.BodyPublisher bodyPublisher = HttpRequest
@@ -68,6 +69,8 @@ public class StatsClient {
                     .header(HttpHeaders.CONTENT_TYPE, "application/json")
                     .header(HttpHeaders.ACCEPT, "application/json")
                     .build();
+
+            log.info("StatsClient / hitRequest: {}", hitRequest.toString());
 
             // отправляем сформированный запрос
             HttpResponse<Void> response = httpClient.send(hitRequest, HttpResponse.BodyHandlers.discarding());
