@@ -1,6 +1,5 @@
 package ru.practicum.ewm.controller.priv;
 
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -39,6 +38,7 @@ public class PrivateEventController {
     @PostMapping
     public EventFullDto addEvent(@PathVariable Long userId,
                                  @Valid @RequestBody NewEventDto newEventDto) {
+//        return new EventFullDto();
         return eventService.addEvent(userId, newEventDto);
     }
 

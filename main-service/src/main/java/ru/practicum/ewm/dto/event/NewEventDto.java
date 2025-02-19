@@ -3,15 +3,15 @@ package ru.practicum.ewm.dto.event;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ru.practicum.ewm.model.Location;
 
-import javax.xml.stream.Location;
 import java.time.LocalDateTime;
 
-@Builder
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewEventDto {

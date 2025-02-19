@@ -1,6 +1,5 @@
 package ru.practicum.ewm.dto.event;
 
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,12 +15,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UpdateEventAdminRequest {
 
-    @Size(min = 20, max = 2000)
+//    @Size(min = 20, max = 2000)
     private String annotation;
 
     private Long category;
 
-    @Size(min = 20, max = 7000)
+//    @Size(min = 20, max = 7000)
     private String description;
 
     private LocalDateTime eventDate;
@@ -36,7 +35,7 @@ public class UpdateEventAdminRequest {
 
     private StateActionAdmin stateAction;
 
-    @Size(min = 3, max = 120)
+//    @Size(min = 3, max = 120)
     private String title;
 
 }
