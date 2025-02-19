@@ -1,11 +1,9 @@
 package ru.practicum.ewm.dto.event;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.model.Location;
 
 import java.time.LocalDateTime;
@@ -14,31 +12,30 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Valid
 public class NewEventDto {
 
     @NotNull
+    @NotBlank
     @Size(min = 20, max = 2000)
     private String annotation;
-
     @NotNull
     private Long category;
-
     @NotNull
+    @NotBlank
     @Size(min = 20, max = 7000)
     private String description;
-
     @NotNull
     private LocalDateTime eventDate;
-
     @NotNull
     private Location location;
-
     private Boolean paid = false;
+    @PositiveOrZero
     private Long participantLimit = 0L;
-    private Boolean requestModeration = true;
+
+    Boolean requestModeration = true;
 
     @NotNull
     @Size(min = 3, max = 120)
-    private String title;
-
+    String title;
 }

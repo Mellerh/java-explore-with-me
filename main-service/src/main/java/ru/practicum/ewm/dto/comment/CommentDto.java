@@ -1,8 +1,7 @@
-package ru.practicum.ewm.dto.request;
+package ru.practicum.ewm.dto.comment;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 
@@ -10,10 +9,10 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParticipationRequestDto {
+public class CommentDto {
     private Long id;
     private LocalDateTime created;
     private Long event;
-    private Long requester;
-    private RequestStatus status;
+    private Long commentator;
+    private String commentText;
 }

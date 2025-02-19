@@ -1,22 +1,24 @@
 package ru.practicum.ewm.model;
-import jakarta.persistence.*;
-import lombok.*;
 
-@Getter
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import jakarta.persistence.*;
+
 @Setter
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@NoArgsConstructor
 @Entity
 @Table(name = "locations")
 public class Location {
-
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "lat", nullable = false)
-    private Float lat;
-    @Column(name = "lon", nullable = false)
-    private Float lon;
+
+    @Column(name = "lat")
+    private Float lat; // Широта
+
+    @Column(name = "lon")
+    private Float lon; // Долгота
 }

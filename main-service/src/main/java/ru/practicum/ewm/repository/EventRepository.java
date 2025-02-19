@@ -1,4 +1,4 @@
-package ru.practicum.ewm.repostirory;
+package ru.practicum.ewm.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,6 @@ import java.util.Set;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
-
     boolean existsByCategoryId(Long categoryId);
 
     Set<Event> findAllByIdIn(Set<Long> eventIdList);
@@ -57,6 +56,4 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                            @Param("rangeStart") LocalDateTime rangeStart,
                            @Param("rangeEnd") LocalDateTime rangeEnd,
                            Pageable pageable);
-
-
 }

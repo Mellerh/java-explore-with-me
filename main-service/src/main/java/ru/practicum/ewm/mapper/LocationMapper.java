@@ -1,4 +1,4 @@
-package ru.practicum.ewm.model.mapper;
+package ru.practicum.ewm.mapper;
 
 import org.mapstruct.Mapper;
 import ru.practicum.ewm.dto.location.LocationDto;

@@ -1,39 +1,41 @@
 package ru.practicum.ewm.model;
 
-import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.enums.RequestStatus;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Builder
-@Getter
 @Setter
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@NoArgsConstructor
 @Entity
 @Table(name = "requests")
 public class Request {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "created")
-    private LocalDateTime created;
+    private LocalDateTime created; // Дата и время создания заявки
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    private Event event;
+    private Event event; // Идентификатор события
 
     @ManyToOne
     @JoinColumn(name = "requester_id")
-    private User requester;
+    private User requester; // Идентификатор пользователя, отправившего заявку
 
     @Enumerated(EnumType.STRING)
-    private RequestStatus status;
+    private RequestStatus status; // Статус заявки
 
-    public Request(LocalDateTime now, Event event, User requester, RequestStatus requestStatus) {
+    public Request(LocalDateTime created, Event event, User requester, RequestStatus status) {
+        this.created = created;
+        this.event = event;
+        this.requester = requester;
+        this.status = status;
     }
 }

@@ -1,26 +1,24 @@
 package ru.practicum.ewm.model;
 
-import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@Builder
-@Getter
+import jakarta.persistence.*;
+
 @Setter
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    private String email; // Почтовый адрес
 
     @Column(name = "name")
-    private String name;
-
+    private String name; // Имя
 }

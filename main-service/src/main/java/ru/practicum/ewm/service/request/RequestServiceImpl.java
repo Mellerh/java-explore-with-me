@@ -1,6 +1,5 @@
 package ru.practicum.ewm.service.request;
 
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.request.EventRequestStatusUpdateRequest;
@@ -9,15 +8,16 @@ import ru.practicum.ewm.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.enums.RequestStatus;
 import ru.practicum.ewm.enums.RequestStatusUpdate;
-import ru.practicum.ewm.exception.exceptions.BadRequestException;
-import ru.practicum.ewm.exception.exceptions.NotFoundException;
+import ru.practicum.ewm.errorHandler.exceptions.AlreadyExistsException;
+import ru.practicum.ewm.errorHandler.exceptions.NotFoundException;
+import ru.practicum.ewm.errorHandler.exceptions.ValidationException;
+import ru.practicum.ewm.mapper.RequestMapper;
 import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.model.Request;
 import ru.practicum.ewm.model.User;
-import ru.practicum.ewm.model.mapper.RequestMapper;
-import ru.practicum.ewm.repostirory.EventRepository;
-import ru.practicum.ewm.repostirory.RequestRepository;
-import ru.practicum.ewm.repostirory.UserRepository;
+import ru.practicum.ewm.repository.EventRepository;
+import ru.practicum.ewm.repository.RequestRepository;
+import ru.practicum.ewm.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,13 +27,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
-
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
-    // !!PRIVATE
+    // private
+    // Получение инфо о запросах на участие в событии текущего пользователя
     @Override
     public List<ParticipationRequestDto> getRequestsByCurrentUserOfCurrentEvent(Long userId, Long eventId) {
         List<ParticipationRequestDto> participationRequestDtoList = new ArrayList<>();
@@ -43,17 +43,15 @@ public class RequestServiceImpl implements RequestService {
         }
 
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User does not exist " + userId);
-        }
-        if (!eventRepository.existsById(eventId)) {
-            throw new NotFoundException("Event does not exist " + eventId);
+            throw new NotFoundException("User не существует " + userId);
         }
 
         List<Request> requestList;
-        if (userId.equals(eventRepository.findById(eventId).get().getInitiator().getId())) {
+        if (userId.equals(eventRepository.findById(eventId).orElseThrow(() ->
+                new NotFoundException("Event не существует " + eventId)).getInitiator().getId())) {
             requestList = requestRepository.findAllByEvent_InitiatorIdAndEvent_Id(userId, eventId);
         } else {
-            throw new ValidationException("User с id " + userId + " инициатор event с id " + eventId);
+            throw new ValidationException("User инициатор Event" + userId + eventId);
         }
 
         for (Request request : requestList) {
@@ -62,26 +60,29 @@ public class RequestServiceImpl implements RequestService {
         return participationRequestDtoList;
     }
 
+    // Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя
     @Override
     public EventRequestStatusUpdateResult updateRequest(Long userId, Long eventId,
                                                         EventRequestStatusUpdateRequest eventRequest) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User с id " + userId + " не создан");
+            throw new NotFoundException("User не существует " + userId);
         }
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event с id " + eventId + " не создан"));
+                .orElseThrow(() -> new NotFoundException("Event не существует " + eventId));
 
         if (event.getParticipantLimit() == 0 && !event.getRequestModeration()) {
-            throw new ValidationException("Moderation не требуется: id - " + eventId);
+            throw new ValidationException("Moderation не требуется " + eventId);
         }
 
         Long confirmedRequest = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
 
         if (confirmedRequest >= event.getParticipantLimit()) {
-            throw new BadRequestException("Participation достигнут лимит на участив в Event с id " + eventId);
+            throw new AlreadyExistsException("Participation достигнут лимит " + eventId);
         }
 
+        // получаем список всех запросов статус которых нужно обновить
         List<Long> requestIdList = eventRequest.getRequestIds();
+        // получаем статус события, который нужно проставить у всех событий
         RequestStatusUpdate status = eventRequest.getStatus();
 
         List<Request> requestList = requestRepository.findAllByIdIn(requestIdList);
@@ -94,12 +95,14 @@ public class RequestServiceImpl implements RequestService {
 
         List<Request> updatedRequests = new ArrayList<>();
 
+        // перебираем все запросы
         for (Request currentRequest : requestList) {
             if (status == RequestStatusUpdate.CONFIRMED && currentRequest.getStatus().equals(RequestStatus.PENDING)) {
                 if (currentRequest.getStatus().equals(RequestStatus.CONFIRMED)) {
-                    throw new BadRequestException("Request уже подтверждён");
+                    throw new AlreadyExistsException("Request уже подтверждён");
                 }
                 if (confirmedRequest >= event.getParticipantLimit()) {
+                    // всем отказываем когда превышен лимит
                     currentRequest.setStatus(RequestStatus.REJECTED);
                     updatedRequests.add(currentRequest);
                     rejectedRequests.add(currentRequest);
@@ -109,17 +112,19 @@ public class RequestServiceImpl implements RequestService {
                 confirmedRequest++;
                 confirmedRequests.add(currentRequest);
             }
-
             if (status == RequestStatusUpdate.REJECTED && currentRequest.getStatus().equals(RequestStatus.PENDING)) {
+                // отказываем когда событие отменилось
                 currentRequest.setStatus(RequestStatus.REJECTED);
                 updatedRequests.add(currentRequest);
                 rejectedRequests.add(currentRequest);
             }
         }
 
+        // сохранили все запросы с новыми статусами в БД
         requestRepository.saveAll(updatedRequests);
         eventRepository.save(event);
 
+        // переводим в ДТО и на выход
         List<ParticipationRequestDto> confirmedRequestsDto =
                 confirmedRequests.stream().map(requestMapper::toParticipationRequestDto).collect(Collectors.toList());
         List<ParticipationRequestDto> rejectedRequestsDto =
@@ -134,10 +139,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
 
+    // Получение инфо о заявках текущего пользователя на участие в чужих событиях
     @Override
     public List<ParticipationRequestDto> getRequestsByCurrentUser(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User с id " + userId + " не существует");
+            throw new NotFoundException("User не существует");
         }
         List<Request> requestList = requestRepository.findAllByRequesterIdAndNotInitiator(userId);
         List<ParticipationRequestDto> participationRequestDtoList = new ArrayList<>();
@@ -147,41 +153,45 @@ public class RequestServiceImpl implements RequestService {
         return participationRequestDtoList;
     }
 
+    // Добавление запроса от текущего пользователя на участие в событии
     @Override
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
 
+        // выгружаем данные пользователя, кто отправиляет запрос
         User requester = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User с id " + userId + " не существует"));
+                .orElseThrow(() -> new NotFoundException("User не существует " + userId));
 
         // выгружаем данные события
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event с id " + eventId + " не существует"));
+                .orElseThrow(() -> new NotFoundException("Event не существует " + eventId));
 
         // создаем запрос
         Request request = new Request(LocalDateTime.now(), event, requester, RequestStatus.PENDING);
 
         if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
-            throw new BadRequestException("Request с id-пользователем и id-event уже существует " + userId + eventId);
+            throw new AlreadyExistsException("Request уже существует: userId {}, eventId {} " + userId + eventId);
         }
 
         if (event.getInitiator().getId().equals(userId)) {
-            throw new BadRequestException("Initiator не может запрашивать " + userId);
+            throw new AlreadyExistsException("Initiator не может быть requester " + userId);
         }
         if (!(event.getState().equals(EventState.PUBLISHED))) {
-            throw new BadRequestException("Event ещё не опубликован");
+            throw new AlreadyExistsException("Event ещё не опубликован");
         }
 
         Long confirmedRequest = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long limit = event.getParticipantLimit();
 
+        // если есть ограничение, то проверяем. Если ограничения нет, то автоматически подтверждаем запрос
         if (limit != 0) {
             if (limit.equals(confirmedRequest)) {
-                throw new BadRequestException("Достигнут лимит подтверждений: " + limit);
+                throw new AlreadyExistsException("Максимальный confirmed был достигнут: " + limit);
             }
         } else {
             request.setStatus(RequestStatus.CONFIRMED);
         }
 
+        // если модерация не нужна, то автоматом подтверждаем запрос и увеличиваем счетчик
         if (!event.getRequestModeration()) {
             request.setStatus(RequestStatus.CONFIRMED);
         }
@@ -190,16 +200,13 @@ public class RequestServiceImpl implements RequestService {
         return requestMapper.toParticipationRequestDto(request);
     }
 
+    // Отмена своего запроса на участие в событии
     @Override
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         Request request = requestRepository.findByIdAndRequesterId(requestId, userId)
-                .orElseThrow(() -> new NotFoundException("Запрос с id " + requestId
-                        + " от пользователя с " + userId + " не существует"));
-
+                .orElseThrow(() -> new NotFoundException("Request с таким id yt существует" + requestId + userId));
         request.setStatus(RequestStatus.CANCELED);
         requestRepository.save(request);
-
         return requestMapper.toParticipationRequestDto(request);
     }
-
 }
