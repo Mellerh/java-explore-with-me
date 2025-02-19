@@ -39,7 +39,6 @@ public class EventServiceImpl implements EventService {
     private final RequestRepository requestRepository;
 
     private final StatsClient statsClient;
-
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     // !!PRIVATE
