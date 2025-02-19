@@ -52,7 +52,7 @@ public class EventServiceImpl implements EventService {
         }
         return eventShortDtoList;
     }
-    // добавление нового события
+
     @Override
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
         User user = userRepository.findById(userId)
