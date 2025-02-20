@@ -17,6 +17,7 @@ import ru.practicum.ewm.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.service.event.EventService;
 import ru.practicum.ewm.service.request.RequestService;
+
 import java.util.List;
 
 @RestController
@@ -24,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated 
 public class PrivateEventController {
+
     private final EventService eventService;
     private final RequestService requestService;
 
