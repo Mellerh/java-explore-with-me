@@ -3,9 +3,7 @@ package ru.practicum.ewm.dto.event;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.model.Location;
-
 import java.time.LocalDateTime;
 
 @Getter

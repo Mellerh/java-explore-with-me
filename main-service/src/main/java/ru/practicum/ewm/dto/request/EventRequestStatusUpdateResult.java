@@ -1,8 +1,6 @@
 package ru.practicum.ewm.dto.request;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.List;
 
 @Getter

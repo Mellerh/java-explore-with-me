@@ -17,7 +17,6 @@ import ru.practicum.ewm.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.service.event.EventService;
 import ru.practicum.ewm.service.request.RequestService;
-
 import java.util.List;
 
 @RestController

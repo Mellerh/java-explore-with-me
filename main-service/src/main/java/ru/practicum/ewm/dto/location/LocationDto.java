@@ -1,7 +1,6 @@
 package ru.practicum.ewm.dto.location;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter

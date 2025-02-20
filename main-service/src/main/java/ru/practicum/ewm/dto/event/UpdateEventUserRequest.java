@@ -3,10 +3,8 @@ package ru.practicum.ewm.dto.event;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.dto.location.LocationDto;
 import ru.practicum.ewm.enums.StateActionUser;
-
 import java.time.LocalDateTime;
 
 @Getter

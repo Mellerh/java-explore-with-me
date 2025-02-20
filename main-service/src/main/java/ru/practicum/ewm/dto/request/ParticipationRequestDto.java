@@ -1,9 +1,7 @@
 package ru.practicum.ewm.dto.request;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.enums.RequestStatus;
-
 import java.time.LocalDateTime;
 
 @Getter

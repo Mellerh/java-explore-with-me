@@ -1,12 +1,10 @@
 package ru.practicum.ewm.dto.event;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.dto.category.CategoryDto;
 import ru.practicum.ewm.dto.location.LocationDto;
 import ru.practicum.ewm.dto.user.UserShortDto;
 import ru.practicum.ewm.enums.EventState;
-
 import java.time.LocalDateTime;
 
 @Getter

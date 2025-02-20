@@ -1,7 +1,6 @@
 package ru.practicum.ewm.model;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import jakarta.persistence.*;
 import java.util.Set;
 
