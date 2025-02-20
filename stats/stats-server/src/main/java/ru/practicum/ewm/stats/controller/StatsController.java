@@ -3,6 +3,7 @@ package ru.practicum.ewm.stats.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.stats.EndpointHitDto;
@@ -29,7 +30,9 @@ public class StatsController {
     }
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void recordHit(@Valid @RequestBody EndpointHitDto endpointHitDto) {
+        System.out.println(endpointHitDto);
         statsService.recordHit(endpointHitDto);
     }
 

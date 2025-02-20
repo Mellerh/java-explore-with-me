@@ -52,7 +52,7 @@ public class StatsClient {
                 .app(application)
                 .ip(userIp)
                 .uri(requestUri)
-                .timestamp(LocalDateTime.now())
+                .created(LocalDateTime.now())
                 .build();
 
         log.info("StatsClient / hit: {}", hit.toString());

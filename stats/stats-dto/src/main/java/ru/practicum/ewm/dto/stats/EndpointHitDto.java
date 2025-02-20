@@ -26,14 +26,14 @@ public class EndpointHitDto {
     @NotBlank
     private String ip;
 
-    private LocalDateTime timestamp;
+    private LocalDateTime created = LocalDateTime.now();
 
     public Map<String, Object> toMap() {
         Map<String, Object> values = new HashMap<>();
         values.put("app", app);
-        values.put("uri", uri);
         values.put("ip", ip);
-        values.put("created", timestamp);
+        values.put("created", created);
+        values.put("uri", uri);
 
         return values;
     }
