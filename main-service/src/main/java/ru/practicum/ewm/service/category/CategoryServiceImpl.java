@@ -58,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
-    // public
+    // PUBLIC
     // получение категорий
     @Override
     public List<CategoryDto> getCategoryList(Pageable pageable) {
