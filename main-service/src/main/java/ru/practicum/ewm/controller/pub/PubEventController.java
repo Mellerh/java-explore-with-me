@@ -4,14 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.dto.comment.CommentDto;
 import ru.practicum.ewm.dto.event.EventFullDto;
 import ru.practicum.ewm.dto.event.EventShortDto;
-import ru.practicum.ewm.service.comment.CommentService;
 import ru.practicum.ewm.service.event.EventService;
 
 import java.util.List;
@@ -21,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PubEventController {
     private final EventService eventService;
-    private final CommentService commentService;
 
     // получение событий с возможностью фильтрации
     @GetMapping
@@ -30,9 +26,9 @@ public class PubEventController {
                                             @RequestParam(required = false) List<Long> categories,
                                             @RequestParam(required = false) Boolean paid,
                                             @RequestParam(required = false)
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String rangeStart,
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String rangeStart,
                                             @RequestParam(required = false)
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String rangeEnd,
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String rangeEnd,
                                             @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
                                             @RequestParam(required = false) String sort,
                                             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
@@ -46,14 +42,6 @@ public class PubEventController {
     @GetMapping("/{id}")
     public EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request) {
         return eventService.getEvent(id, request.getRemoteAddr(), request.getRequestURI());
-    }
-
-    // получение комментариев к событию по его id
-    @GetMapping("/{id}/comments")
-    public List<CommentDto> getAllCommentsToEvent(@PathVariable Long id,
-                                                  @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
-                                                  @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
-        return commentService.getAllCommentsToEvent(id, PageRequest.of(from, size));
     }
 
 
