@@ -37,7 +37,7 @@ public class StatsClient {
     private final HttpClient httpClient;
 
     public StatsClient(@Value("ewm-main-service") String application,
-                       @Value("http://localhost:9090") String statsServiceUri,
+                       @Value("${STATS_SERVER_URL:http://stats-server:9090}") String statsServiceUri,
                        ObjectMapper json) {
         this.application = application;
         this.statsServiceUri = statsServiceUri;
