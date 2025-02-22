@@ -3,6 +3,7 @@ package ru.practicum.ewm.service.category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.category.CategoryDto;
 import ru.practicum.ewm.dto.category.NewCategoryDto;
 import ru.practicum.ewm.errorHandler.exceptions.AlreadyExistsException;
@@ -24,6 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
     // admin
     // добавление новой категории
     @Override
+    @Transactional
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
         if (categoryRepository.existsByName(newCategoryDto.getName())) {
             throw new AlreadyExistsException("Category уже существует: " + newCategoryDto.getName());
@@ -35,6 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     // удаление категории
     @Override
+    @Transactional
     public void deleteCategory(Long categoryId) {
         if (eventRepository.existsByCategoryId(categoryId)) {
             throw new AlreadyExistsException("Category не пустая");
@@ -44,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     // изменение категории
     @Override
+    @Transactional
     public CategoryDto updateCategory(Long categoryId, NewCategoryDto categoryDto) {
         if (categoryDto.getName() == null || categoryDto.getName().isEmpty()) {
             throw new RuntimeException("Category имя не может быть пустым");

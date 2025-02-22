@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.client.stats.StatsClient;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.stats.ViewStats;
@@ -56,6 +57,7 @@ public class EventServiceImpl implements EventService {
 
     // добавление нового события
     @Override
+    @Transactional
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User не существует " + userId));
@@ -89,6 +91,7 @@ public class EventServiceImpl implements EventService {
 
     // изменения события добавленного текущим пользователем
     @Override
+    @Transactional
     public EventFullDto updateEventByInitiator(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
         Event eventToUpdate = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event не существует " + eventId));
@@ -154,6 +157,7 @@ public class EventServiceImpl implements EventService {
 
     // редактирование данных события и его статуса
     @Override
+    @Transactional
     public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event eventToUpdate = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event не существует " + eventId));

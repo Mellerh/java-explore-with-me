@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.client.stats.StatsClient;
 import ru.practicum.ewm.dto.compilation.CompilationDto;
 import ru.practicum.ewm.dto.compilation.NewCompilationDto;
@@ -76,6 +77,7 @@ public class CompilationServiceImpl implements CompilationService {
     // admin
     // добавление новой подборки
     @Override
+    @Transactional
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
         // если в подборке уже есть какие-то события, то их нужно сохранить
         if (newCompilationDto.getEvents() != null && newCompilationDto.getEvents().size() != 0) {
@@ -107,6 +109,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     // удаление подборки
     @Override
+    @Transactional
     public void deleteCompilation(Long compilationId) {
         compilationRepository.findById(compilationId).orElseThrow(() ->
                 new NotFoundException("Compilation не существует" + compilationId));
@@ -115,6 +118,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     // обновить информацию о подборке
     @Override
+    @Transactional
     public CompilationDto updateCompilation(Long compilationId, UpdateCompilationRequest updateCompilationRequest) {
         // выгружаем подборку из БД
         Compilation compilation = compilationRepository.findById(compilationId).orElseThrow(() ->

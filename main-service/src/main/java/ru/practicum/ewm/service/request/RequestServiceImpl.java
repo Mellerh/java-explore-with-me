@@ -2,6 +2,7 @@ package ru.practicum.ewm.service.request;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.request.ParticipationRequestDto;
@@ -62,6 +63,7 @@ public class RequestServiceImpl implements RequestService {
 
     // Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult updateRequest(Long userId, Long eventId,
                                                         EventRequestStatusUpdateRequest eventRequest) {
         if (!userRepository.existsById(userId)) {
@@ -155,6 +157,7 @@ public class RequestServiceImpl implements RequestService {
 
     // Добавление запроса от текущего пользователя на участие в событии
     @Override
+    @Transactional
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
 
         // выгружаем данные пользователя, кто отправиляет запрос
@@ -202,6 +205,7 @@ public class RequestServiceImpl implements RequestService {
 
     // Отмена своего запроса на участие в событии
     @Override
+    @Transactional
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         Request request = requestRepository.findByIdAndRequesterId(requestId, userId)
                 .orElseThrow(() -> new NotFoundException("Request с таким id yt существует" + requestId + userId));
