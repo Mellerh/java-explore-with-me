@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS comments (
     text VARCHAR,
     creator_id BIGINT,
     event_id BIGINT,
-    created TIMESTAMP WITHOUT TIME ZONE
+    created TIMESTAMP WITHOUT TIME ZONE,
     CONSTRAINT fk_comment_creator FOREIGN KEY (creator_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_event_for FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE
 );

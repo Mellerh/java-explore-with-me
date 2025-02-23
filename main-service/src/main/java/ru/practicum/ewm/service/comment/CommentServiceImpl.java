@@ -46,6 +46,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         if (!updateCommentDto.getText().isEmpty() && !updateCommentDto.getText().isBlank()) {
+            comment.setText(updateCommentDto.getText());
             commentRepository.save(comment);
         }
 
