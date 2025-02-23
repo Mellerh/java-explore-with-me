@@ -6,6 +6,7 @@ import ru.practicum.ewm.dto.comment.CommentDto;
 import ru.practicum.ewm.dto.comment.NewCommentDto;
 import ru.practicum.ewm.dto.comment.UpdateCommentDto;
 import ru.practicum.ewm.errorHandler.exceptions.NotFoundException;
+import ru.practicum.ewm.errorHandler.exceptions.ValidationException;
 import ru.practicum.ewm.mapper.CommentMapper;
 import ru.practicum.ewm.model.Comment;
 import ru.practicum.ewm.model.Event;
@@ -36,26 +37,44 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto updateComment(Long userId, Long eventId, UpdateCommentDto updateCommentDto) {
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new NotFoundException("Пользователь с id " + userId + " не найден."));
-        Event event = eventRepository.findById(eventId).orElseThrow(()
-                -> new NotFoundException("Event с id " + eventId + " не найден"));
+    public CommentDto updateComment(Long userId, Long commentId, UpdateCommentDto updateCommentDto) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()
+                -> new NotFoundException("Comment с id " + commentId + " не найден."));
 
-        Comment comment = CommentMapper.toComment(updateCommentDto, user, event);
-        return CommentMapper.toCommentDto(commentRepository.save(comment));
+        if (comment.getCreator().getId() != userId) {
+            throw new ValidationException("Пользователь с id " + userId + " не оставлял этот комментарий.");
+        }
+
+        if (!updateCommentDto.getText().isEmpty() && !updateCommentDto.getText().isBlank()) {
+            commentRepository.save(comment);
+        }
+
+        return CommentMapper.toCommentDto((comment));
     }
 
     @Override
     public void deleteComment(Long userId, Long commentId) {
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new NotFoundException("Пользователь с id " + userId + " не найден."));
+
         Comment comment = commentRepository.findById(commentId).orElseThrow(()
                 -> new NotFoundException("Comment с id " + commentId + " не найден."));
+
+        if (comment.getCreator().getId() != userId) {
+            throw new ValidationException("Пользователь с id " + userId + " не оставлял этот комментарий.");
+        }
+
+        commentRepository.deleteById(commentId);
     }
 
     @Override
     public List<CommentDto> getAllEventComments(Long eventId) {
-        return List.of();
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException("Event с id " + eventId + " не найден.");
+        }
+
+        List<Comment> commentList = commentRepository.findAllByEventId(eventId);
+
+        return commentList.stream()
+                .map(comment -> CommentMapper.toCommentDto(comment))
+                .toList();
     }
 }

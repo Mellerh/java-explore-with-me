@@ -19,11 +19,9 @@ public class CommentMapper {
                 .event(event)
                 .build();
     }
-    public static Comment toComment(UpdateCommentDto updateCommentDto, User user, Event event) {
+    public static Comment toComment(UpdateCommentDto updateCommentDto) {
         return Comment.builder()
                 .text(updateCommentDto.getText())
-                .creator(user)
-                .event(event)
                 .build();
     }
 
