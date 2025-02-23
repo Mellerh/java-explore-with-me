@@ -1,22 +1,43 @@
 package ru.practicum.ewm.mapper;
 
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 import ru.practicum.ewm.dto.comment.CommentDto;
 import ru.practicum.ewm.dto.comment.NewCommentDto;
 import ru.practicum.ewm.dto.comment.UpdateCommentDto;
 import ru.practicum.ewm.model.Comment;
+import ru.practicum.ewm.model.Event;
+import ru.practicum.ewm.model.User;
 
-import java.util.List;
+@Component
+public class CommentMapper {
 
-@Mapper(componentModel = "spring")
-public interface CommentMapper {
+    public static Comment toComment(NewCommentDto newCommentDto, User user, Event event) {
+        return Comment.builder()
+                .text(newCommentDto.getText())
+                .created(newCommentDto.getCreated())
+                .creator(user)
+                .event(event)
+                .build();
+    }
+    public static Comment toComment(UpdateCommentDto updateCommentDto, User user, Event event) {
+        return Comment.builder()
+                .text(updateCommentDto.getText())
+                .creator(user)
+                .event(event)
+                .build();
+    }
 
-    Comment toComment(NewCommentDto newCommentDto);
-    Comment toComment(UpdateCommentDto updateCommentDto);
+    public static CommentDto toCommentDto(Comment comment) {
+        return CommentDto.builder()
+                .id(comment.getId())
+                .text(comment.getText())
+                .created(comment.getCreated())
+                .authorName(comment.getCreator().getName())
+                .eventId(comment.getEvent().getId())
+                .build();
+    }
 
-    CommentDto toCommentDto(Comment comment);
-
-    List<CommentDto> toCommentDtoList(List<Comment> comments);
+//    List<CommentDto> toCommentDtoList(List<Comment> comments);
 
 
 
