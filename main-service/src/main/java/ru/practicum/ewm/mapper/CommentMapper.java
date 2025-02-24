@@ -7,6 +7,7 @@ import ru.practicum.ewm.dto.comment.UpdateCommentDto;
 import ru.practicum.ewm.model.Comment;
 import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.model.User;
+
 @Component
 public class CommentMapper {
     public static Comment toComment(NewCommentDto newCommentDto, User user, Event event) {
@@ -17,11 +18,13 @@ public class CommentMapper {
                 .event(event)
                 .build();
     }
+
     public static Comment toComment(UpdateCommentDto updateCommentDto) {
         return Comment.builder()
                 .text(updateCommentDto.getText())
                 .build();
     }
+
     public static CommentDto toCommentDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
@@ -31,4 +34,5 @@ public class CommentMapper {
                 .eventId(comment.getEvent().getId())
                 .build();
     }
+    
 }
