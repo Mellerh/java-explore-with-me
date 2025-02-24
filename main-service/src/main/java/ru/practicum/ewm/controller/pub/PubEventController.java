@@ -7,8 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.dto.comment.CommentDto;
 import ru.practicum.ewm.dto.event.EventFullDto;
 import ru.practicum.ewm.dto.event.EventShortDto;
+import ru.practicum.ewm.service.comment.CommentService;
 import ru.practicum.ewm.service.event.EventService;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PubEventController {
     private final EventService eventService;
+    private final CommentService commentService;
 
     // получение событий с возможностью фильтрации
     @GetMapping
@@ -42,6 +45,11 @@ public class PubEventController {
     @GetMapping("/{id}")
     public EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request) {
         return eventService.getEvent(id, request.getRemoteAddr(), request.getRequestURI());
+    }
+
+    @GetMapping("/{id}/comments")
+    public List<CommentDto> getAllEventComments(@PathVariable Long id) {
+        return commentService.getAllEventComments(id);
     }
 
 

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users, categories, locations, events, compilations, requests, compilations_events;
+DROP TABLE IF EXISTS users, categories, locations, events, compilations, requests, compilations_events, comments;
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -59,4 +59,14 @@ CREATE TABLE IF NOT EXISTS compilations_events (
     compilation_id BIGINT,
     CONSTRAINT fk_events_compilations_events FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
     CONSTRAINT fk_compilations_compilations_events FOREIGN KEY (compilation_id) REFERENCES compilations (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    text VARCHAR,
+    creator_id BIGINT,
+    event_id BIGINT,
+    created TIMESTAMP WITHOUT TIME ZONE,
+    CONSTRAINT fk_comment_creator FOREIGN KEY (creator_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT fk_event_for FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE
 );
