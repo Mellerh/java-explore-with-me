@@ -2,6 +2,8 @@ package ru.practicum.ewm.service.comment;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import ru.practicum.ewm.dto.comment.CommentDto;
 import ru.practicum.ewm.dto.comment.NewCommentDto;
 import ru.practicum.ewm.dto.comment.UpdateCommentDto;
@@ -26,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public CommentDto addComment(Long userId, Long eventId, NewCommentDto newCommentDto) {
         User user = userRepository.findById(userId).orElseThrow(()
                 -> new NotFoundException("Пользователь с id " + userId + " не найден."));
@@ -37,6 +40,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public CommentDto updateComment(Long userId, Long commentId, UpdateCommentDto updateCommentDto) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(()
                 -> new NotFoundException("Comment с id " + commentId + " не найден."));
@@ -45,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
             throw new ValidationException("Пользователь с id " + userId + " не оставлял этот комментарий.");
         }
 
-        if (!updateCommentDto.getText().isEmpty() && !updateCommentDto.getText().isBlank()) {
+        if (StringUtils.hasText(updateCommentDto.getText())) {
             comment.setText(updateCommentDto.getText());
             commentRepository.save(comment);
         }
@@ -54,6 +58,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(Long userId, Long commentId) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(()
