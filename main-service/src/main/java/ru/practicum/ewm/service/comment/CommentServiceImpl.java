@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(()
                 -> new NotFoundException("Comment с id " + commentId + " не найден."));
 
-        if (comment.getCreator().getId() != userId) {
+        if (!comment.getCreator().getId().equals(userId)) {
             throw new ValidationException("Пользователь с id " + userId + " не оставлял этот комментарий.");
         }
 
@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(()
                 -> new NotFoundException("Comment с id " + commentId + " не найден."));
 
-        if (comment.getCreator().getId() != userId) {
+        if (!comment.getCreator().getId().equals(userId)) {
             throw new ValidationException("Пользователь с id " + userId + " не оставлял этот комментарий.");
         }
 
