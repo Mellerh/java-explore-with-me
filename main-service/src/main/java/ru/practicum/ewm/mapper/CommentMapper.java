@@ -34,5 +34,4 @@ public class CommentMapper {
                 .eventId(comment.getEvent().getId())
                 .build();
     }
-    
 }
