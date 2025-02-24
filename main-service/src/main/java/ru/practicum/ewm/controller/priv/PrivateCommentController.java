@@ -2,6 +2,7 @@ package ru.practicum.ewm.controller.priv;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.comment.CommentDto;
@@ -18,6 +19,7 @@ public class PrivateCommentController {
     private final CommentService commentService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addNewComment(@PathVariable("userId") Long userId,
                                     @RequestParam("eventId") Long eventId,
                                     @Valid @RequestBody NewCommentDto commentDto) {
